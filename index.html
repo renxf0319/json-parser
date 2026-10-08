@@ -1,41 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>JSON 解析器 · 在线格式化 / 校验 / 树形视图</title>
 <meta name="description" content="一个简洁、优雅、功能强大的 JSON 在线解析工具：格式化、压缩、校验、树形视图、语法高亮、复制与下载。" />
+<script>
+  // 提前应用已保存的主题（默认 light），避免首屏闪烁
+  (function () {
+    try {
+      var t = localStorage.getItem("json-tool-theme") || "light";
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>
 <style>
+  /* 默认主题：白色（light） */
   :root {
-    --bg: #0b0f1a;
-    --bg-soft: #111726;
-    --panel: rgba(255, 255, 255, 0.03);
-    --panel-border: rgba(255, 255, 255, 0.08);
-    --panel-border-strong: rgba(255, 255, 255, 0.14);
-    --text: #e8edf6;
-    --text-dim: #9aa7bd;
-    --text-faint: #6b7890;
-    --accent: #7c8cff;
-    --accent-2: #4fd1c5;
-    --accent-glow: rgba(124, 140, 255, 0.35);
-    --ok: #4ade80;
-    --err: #fb7185;
-    --warn: #fbbf24;
-    /* JSON token colors */
-    --t-key: #7cc4ff;
-    --t-str: #6ee7b7;
-    --t-num: #fbbf24;
-    --t-bool: #c084fc;
-    --t-null: #94a3b8;
-    --t-punc: #7c8aa5;
-    --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
-    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
-  }
-
-  :root[data-theme="light"] {
     --bg: #f4f6fb;
     --bg-soft: #ffffff;
     --panel: rgba(15, 23, 42, 0.02);
@@ -54,6 +37,50 @@
     --t-null: #64748b;
     --t-punc: #94a3b8;
     --shadow: 0 20px 50px -24px rgba(31, 41, 90, 0.35);
+    --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --glow-1: rgba(91, 109, 255, 0.10);
+    --glow-2: rgba(14, 165, 164, 0.08);
+    --ok: #16a34a;
+    --err: #e11d48;
+    --warn: #d97706;
+    --ok-glow: rgba(22, 163, 74, 0.16);
+    --err-glow: rgba(225, 29, 72, 0.14);
+    --mark-bg: rgba(217, 119, 6, 0.22);
+    --mark-fg: #7c2d12;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0b0f1a;
+    --bg-soft: #111726;
+    --panel: rgba(255, 255, 255, 0.03);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --panel-border-strong: rgba(255, 255, 255, 0.14);
+    --text: #e8edf6;
+    --text-dim: #9aa7bd;
+    --text-faint: #6b7890;
+    --accent: #7c8cff;
+    --accent-2: #4fd1c5;
+    --accent-glow: rgba(124, 140, 255, 0.35);
+    --ok: #4ade80;
+    --err: #fb7185;
+    --warn: #fbbf24;
+    --ok-glow: rgba(74, 222, 128, 0.14);
+    --err-glow: rgba(251, 113, 133, 0.14);
+    /* JSON token colors */
+    --t-key: #7cc4ff;
+    --t-str: #6ee7b7;
+    --t-num: #fbbf24;
+    --t-bool: #c084fc;
+    --t-null: #94a3b8;
+    --t-punc: #7c8aa5;
+    --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+    --glow-1: rgba(124, 140, 255, 0.12);
+    --glow-2: rgba(79, 209, 197, 0.10);
+    --mark-bg: #fbbf24;
+    --mark-fg: #1a1a1a;
   }
 
   * { box-sizing: border-box; }
@@ -65,8 +92,8 @@
     font-family: var(--sans);
     color: var(--text);
     background:
-      radial-gradient(1200px 600px at 85% -10%, rgba(124, 140, 255, 0.12), transparent 60%),
-      radial-gradient(900px 500px at 5% 110%, rgba(79, 209, 197, 0.10), transparent 55%),
+      radial-gradient(1200px 600px at 85% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(900px 500px at 5% 110%, var(--glow-2), transparent 55%),
       var(--bg);
     min-height: 100vh;
     display: flex;
@@ -291,7 +318,7 @@
   .tree .val-null { color: var(--t-null); }
   .tree .meta { color: var(--text-faint); font-style: italic; margin-left: 8px; font-size: 12px; }
   .tree .children { margin-left: 14px; border-left: 1px solid var(--panel-border); padding-left: 8px; }
-  .tree .row mark { background: var(--warn); color: #1a1a1a; border-radius: 3px; padding: 0 1px; }
+  .tree .row mark { background: var(--mark-bg); color: var(--mark-fg); border-radius: 3px; padding: 0 1px; }
 
   /* Status bar */
   .statusbar {
@@ -307,8 +334,8 @@
     font-weight: 600;
   }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-faint); box-shadow: 0 0 0 4px rgba(255,255,255,0.04); }
-  .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px rgba(74,222,128,0.14); }
-  .dot.err { background: var(--err); box-shadow: 0 0 0 4px rgba(251,113,133,0.14); }
+  .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-glow); }
+  .dot.err { background: var(--err); box-shadow: 0 0 0 4px var(--err-glow); }
   .stat { color: var(--text-dim); }
   .stat b { color: var(--text); font-weight: 700; }
   .err-msg { color: var(--err); font-family: var(--mono); font-size: 12.5px; }
@@ -473,8 +500,8 @@
     }
     try { localStorage.setItem("json-tool-theme", t); } catch (e) {}
   }
-  let savedTheme = "dark";
-  try { savedTheme = localStorage.getItem("json-tool-theme") || "dark"; } catch (e) {}
+  let savedTheme = "light";
+  try { savedTheme = localStorage.getItem("json-tool-theme") || "light"; } catch (e) {}
   applyTheme(savedTheme);
   themeToggle.addEventListener("click", () => {
     const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
