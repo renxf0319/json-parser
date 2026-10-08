@@ -1,8 +1,21 @@
 # JSON 解析器 · Online JSON Parser
 
-> 🔗 项目地址：https://github.com/renxf0319/json-parser
+> 🚀 在线体验：https://renxf0319.github.io/json-parser/
+> 📦 源码仓库：https://github.com/renxf0319/json-parser
 
 一个简洁、优雅、功能强大的 JSON 在线解析工具。纯前端实现，数据完全在本地处理，不上传任何服务器，可离线使用。
+
+## ⭐ 感谢点 Star
+
+如果这个项目对你有帮助，**欢迎点一下 Star ⭐** —— 这是对我最大的鼓励和支持，也会让更多人看到这个工具。
+
+你的支持会直接推动我持续优化：新增功能、修复问题、适配移动端与明暗主题。
+
+<p align="center">
+  <a href="https://github.com/renxf0319/json-parser/stargazers">
+    <img src="https://img.shields.io/github/stars/renxf0319/json-parser?style=social" alt="GitHub stars" />
+  </a>
+</p>
 
 ## ✨ 功能特性
 
